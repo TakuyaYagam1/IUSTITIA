@@ -1,0 +1,44 @@
+:root {
+  --bg-deep: #0a0a0c;
+  --bg-panel: #15161a;
+  --bg-paper: #1d1c18;
+  --ink-bone: #e8e2d4;
+  --ink-muted: #9a948a;
+  --accent-sangvin: #7a1f1f;
+  --accent-ochre: #c9a04b;
+  --rule-line: #2a2a2e;
+
+  --status-guilty: #7a1f1f;
+  --status-acquit: #5a7a3a;
+  --status-pending: #c9a04b;
+
+  --font-serif: 'Cormorant Garamond', 'Times New Roman', serif;
+  --font-sans: 'Inter Tight', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  --font-stamp: 'Special Elite', 'Courier Prime', monospace;
+
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-lg: 1.125rem;
+  --fs-xl: 1.5rem;
+  --fs-2xl: 2rem;
+  --fs-3xl: 2.75rem;
+
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-8: 3rem;
+  --sp-10: 4rem;
+
+  --radius-none: 0;
+  --radius-sm: 2px;
+
+  --z-panel: 10;
+  --z-dropdown: 100;
+  --z-toast: 1000;
+  --z-modal: 2000;
+}

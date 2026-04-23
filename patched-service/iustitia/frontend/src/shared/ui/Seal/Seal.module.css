@@ -1,0 +1,40 @@
+.seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-stamp);
+  font-size: var(--fs-sm);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: var(--sp-2) var(--sp-4);
+  border: 2px solid currentColor;
+  transform: rotate(-7deg);
+  opacity: 0.88;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.topsecret {
+  color: var(--accent-sangvin);
+}
+
+.classified {
+  color: #000;
+  background: var(--accent-ochre);
+  border-color: #000;
+}
+
+.approved {
+  color: var(--status-acquit);
+}
+
+.rejected {
+  color: var(--accent-sangvin);
+}
+
+.large {
+  font-size: var(--fs-lg);
+  padding: var(--sp-3) var(--sp-6);
+  border-width: 3px;
+  letter-spacing: 0.22em;
+}

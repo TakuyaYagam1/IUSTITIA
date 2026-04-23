@@ -1,0 +1,297 @@
+UUID:
+  type: string
+  format: uuid
+  example: "c1111111-1111-4111-8111-111111111111"
+
+Role:
+  type: string
+  enum: [citizen, prosecutor, judge, registrar]
+
+CaseStatus:
+  type: string
+  enum: [draft, open, assigned, hearing, closed]
+
+Verdict:
+  type: string
+  enum: [guilty, acquitted, dismissed]
+
+PreliminaryVerdict:
+  type: string
+  enum: [guilty, acquitted, dismissed]
+
+Classification:
+  type: string
+  enum: [public, classified, top-secret]
+
+ErrorCode:
+  type: string
+  enum:
+    - bad_request
+    - unauthorized
+    - forbidden
+    - not_found
+    - conflict
+    - internal_error
+
+ErrorResponse:
+  type: object
+  required: [error]
+  properties:
+    error:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          $ref: '#/ErrorCode'
+        message:
+          type: string
+          example: "invalid credentials"
+    request_id:
+      type: string
+      example: "req_01HZV...XYZ"
+
+User:
+  type: object
+  required: [id, username, role, dome, created_at]
+  properties:
+    id:        { $ref: '#/UUID' }
+    username:  { type: string, example: "judge_3" }
+    role:      { $ref: '#/Role' }
+    dome:      { type: string, example: "Купол №7" }
+    created_at:
+      type: string
+      format: date-time
+
+UserListItem:
+  type: object
+  required: [id, username, role, dome]
+  properties:
+    id:       { $ref: '#/UUID' }
+    username: { type: string }
+    role:     { $ref: '#/Role' }
+    dome:     { type: string }
+
+LoginRequest:
+  type: object
+  required: [username, password]
+  properties:
+    username: { type: string, minLength: 1, maxLength: 64 }
+    password: { type: string, minLength: 1, maxLength: 128 }
+
+LoginResponse:
+  type: object
+  required: [token, user_id, role, dome]
+  properties:
+    token:   { type: string, description: "JWT access token, TTL = 1h" }
+    user_id: { $ref: '#/UUID' }
+    role:    { $ref: '#/Role' }
+    dome:    { type: string }
+
+Case:
+  type: object
+  required: [id, seq_num, defendant, crime, status, created_at]
+  properties:
+    id:         { $ref: '#/UUID' }
+    seq_num:    { type: integer, example: 1 }
+    defendant:  { type: string, example: "Johan Liebert, Купол №9" }
+    crime:      { type: string }
+    status:     { $ref: '#/CaseStatus' }
+    verdict:
+      type: string
+      nullable: true
+      enum: [guilty, acquitted, dismissed]
+    classified_note:
+      nullable: true
+      type: string
+    author_id:
+      nullable: true
+      allOf:
+        - $ref: '#/UUID'
+    assigned_prosecutor_id:
+      nullable: true
+      allOf:
+        - $ref: '#/UUID'
+    created_at:
+      type: string
+      format: date-time
+
+CaseCreateRequest:
+  type: object
+  required: [defendant, crime, text]
+  properties:
+    defendant: { type: string, minLength: 1, maxLength: 512 }
+    crime:     { type: string, minLength: 1, maxLength: 2048 }
+    text:      { type: string, minLength: 1, maxLength: 8192 }
+
+CaseAcceptRequest:
+  type: object
+  required: [prosecutor_id]
+  properties:
+    prosecutor_id: { $ref: '#/UUID' }
+
+CaseDismissRequest:
+  type: object
+  required: [reason]
+  properties:
+    reason: { type: string, minLength: 1, maxLength: 2048 }
+
+OpinionCreateRequest:
+  type: object
+  required: [preliminary_verdict, reasoning]
+  properties:
+    preliminary_verdict: { $ref: '#/PreliminaryVerdict' }
+    reasoning:           { type: string, minLength: 1, maxLength: 8192 }
+
+CaseOpinion:
+  type: object
+  required: [id, case_id, prosecutor_id, preliminary_verdict, reasoning, filed_at]
+  properties:
+    id:                  { $ref: '#/UUID' }
+    case_id:             { $ref: '#/UUID' }
+    prosecutor_id:       { $ref: '#/UUID' }
+    preliminary_verdict: { $ref: '#/PreliminaryVerdict' }
+    reasoning:           { type: string }
+    filed_at:
+      type: string
+      format: date-time
+
+HearingItem:
+  type: object
+  required: [case, opinion]
+  properties:
+    case:    { $ref: '#/Case' }
+    opinion: { $ref: '#/CaseOpinion' }
+
+VerdictRequest:
+  type: object
+  required: [verdict, reasoning]
+  properties:
+    verdict:   { $ref: '#/Verdict' }
+    sentence:  { type: string, maxLength: 2048 }
+    reasoning: { type: string, minLength: 1, maxLength: 8192 }
+
+VerdictResult:
+  type: object
+  required: [case, document, archive_entry]
+  properties:
+    case:          { $ref: '#/Case' }
+    document:      { $ref: '#/Document' }
+    archive_entry: { $ref: '#/ArchiveEntry' }
+
+SearchRequest:
+  type: object
+  required: [q]
+  properties:
+    q:
+      type: string
+      maxLength: 256
+    order_by:
+      type: string
+      default: "created_at"
+    direction:
+      type: string
+      enum: [ASC, DESC]
+      default: DESC
+    limit:
+      type: integer
+      default: 50
+      minimum: 1
+      maximum: 200
+    offset:
+      type: integer
+      default: 0
+      minimum: 0
+
+Complaint:
+  type: object
+  required: [id, case_id, author_id, text, created_at]
+  properties:
+    id:         { $ref: '#/UUID' }
+    case_id:    { $ref: '#/UUID' }
+    author_id:  { $ref: '#/UUID' }
+    text:       { type: string }
+    evidence_url:
+      nullable: true
+      type: string
+      format: uri
+    evidence_data:
+      nullable: true
+      type: string
+    created_at:
+      type: string
+      format: date-time
+
+ComplaintCreateRequest:
+  type: object
+  required: [case_id, text]
+  properties:
+    case_id: { $ref: '#/UUID' }
+    text:    { type: string, minLength: 1, maxLength: 8192 }
+
+EvidenceRequest:
+  type: object
+  required: [url]
+  properties:
+    url:
+      type: string
+      format: uri
+
+Document:
+  type: object
+  required: [id, case_id, author_id, content, template, created_at]
+  properties:
+    id:        { $ref: '#/UUID' }
+    case_id:   { $ref: '#/UUID' }
+    author_id: { $ref: '#/UUID' }
+    content:   { type: string }
+    template:  { type: string }
+    created_at:
+      type: string
+      format: date-time
+
+DocumentGenerateRequest:
+  type: object
+  required: [case_id, template]
+  properties:
+    case_id:  { $ref: '#/UUID' }
+    template:
+      type: string
+      minLength: 1
+      maxLength: 16384
+
+ArchiveEntry:
+  type: object
+  required: [id, defendant, final_verdict, archived_at]
+  properties:
+    id:             { $ref: '#/UUID' }
+    case_id:
+      type: string
+      format: uuid
+      nullable: true
+    defendant:      { type: string, example: "Sousuke Aizen, Купол №1" }
+    final_verdict:  { $ref: '#/Verdict' }
+    sentence:
+      nullable: true
+      type: string
+      example: "Лишение свободы, 20 000 лет"
+    classified_note:
+      nullable: true
+      type: string
+    archived_at:
+      type: string
+      format: date-time
+
+ArchivePatchRequest:
+  type: object
+  properties:
+    sentence:        { type: string }
+    final_verdict:   { $ref: '#/Verdict' }
+    classified_note: { type: string }
+  additionalProperties: true
+
+HealthStatus:
+  type: object
+  required: [status, version]
+  properties:
+    status:  { type: string, example: "operational" }
+    version: { type: string, example: "3.1.0" }

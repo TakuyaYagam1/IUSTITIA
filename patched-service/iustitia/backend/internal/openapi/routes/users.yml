@@ -1,0 +1,37 @@
+# Users directory - справочник по ролям для назначений.
+
+list_users:
+  get:
+    tags: [cases]
+    summary: Список пользователей по роли
+    description: |
+      Нужен registrar'у (выбор prosecutor при приёме дела) и judge'у
+      (контекст по делу). Возвращает только id, username, role, dome -
+      без паролей.
+    operationId: listUsersByRole
+    parameters:
+      - in: query
+        name: role
+        required: true
+        schema: { $ref: '../components/schemas.yml#/Role' }
+    responses:
+      '200':
+        description: Список пользователей
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../components/schemas.yml#/UserListItem'
+      '401':
+        description: Неавторизован
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '403':
+        description: Запрещено (только registrar/judge)
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'

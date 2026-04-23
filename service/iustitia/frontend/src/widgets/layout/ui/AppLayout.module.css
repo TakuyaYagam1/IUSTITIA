@@ -1,0 +1,14 @@
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-deep);
+}
+
+.main {
+  flex: 1;
+  padding: var(--sp-6) var(--sp-8);
+  max-width: 1240px;
+  width: 100%;
+  margin: 0 auto;
+}

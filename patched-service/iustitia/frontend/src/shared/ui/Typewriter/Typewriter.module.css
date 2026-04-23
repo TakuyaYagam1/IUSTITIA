@@ -1,0 +1,19 @@
+.typewriter {
+  font-family: var(--font-stamp);
+  font-size: var(--fs-base);
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  color: var(--ink-bone);
+  white-space: pre-wrap;
+}
+
+.block {
+  display: block;
+  background: var(--bg-panel);
+  border-left: 2px solid var(--accent-ochre);
+  padding: var(--sp-3) var(--sp-4);
+}
+
+.muted {
+  color: var(--ink-muted);
+}

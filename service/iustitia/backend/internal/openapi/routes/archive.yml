@@ -1,0 +1,92 @@
+list_archive:
+  get:
+    tags: [archive]
+    summary: Список архивных дел
+    operationId: listArchive
+    parameters:
+      - in: query
+        name: limit
+        schema: { type: integer, default: 50, minimum: 1, maximum: 200 }
+      - in: query
+        name: offset
+        schema: { type: integer, default: 0, minimum: 0 }
+    responses:
+      '200':
+        description: Список
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../components/schemas.yml#/ArchiveEntry'
+      '401':
+        description: Неавторизован
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+
+archive_by_id:
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema: { $ref: '../components/schemas.yml#/UUID' }
+  get:
+    tags: [archive]
+    summary: Получить запись архива
+    operationId: getArchiveByID
+    responses:
+      '200':
+        description: Запись архива
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ArchiveEntry'
+      '401':
+        description: Неавторизован
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '404':
+        description: Не найдено
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+  patch:
+    tags: [archive]
+    summary: Обновить запись архива (judge)
+    operationId: patchArchive
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yml#/ArchivePatchRequest'
+    responses:
+      '200':
+        description: Запись обновлена
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ArchiveEntry'
+      '400':
+        description: Невалидный ввод
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '403':
+        description: Не judge
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '404':
+        description: Не найдено
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'

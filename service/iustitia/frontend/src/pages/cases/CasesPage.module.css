@@ -1,0 +1,203 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sp-5);
+  flex-wrap: wrap;
+}
+
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--fs-3xl);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-bone);
+}
+
+.subtitle {
+  font-family: var(--font-stamp);
+  font-size: var(--fs-sm);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.filters {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filterGroup {
+  display: flex;
+  gap: var(--sp-1);
+}
+
+.filterBtn {
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--rule-line);
+  background: transparent;
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition:
+    color 120ms ease,
+    border-color 120ms ease;
+}
+
+.filterBtn:hover {
+  color: var(--ink-bone);
+}
+
+.filterBtnActive {
+  color: var(--accent-ochre);
+  border-color: var(--accent-ochre);
+}
+
+.ctaLink {
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: var(--sp-2) var(--sp-4);
+  border: 1px solid var(--accent-sanguine);
+  color: var(--accent-sanguine);
+  background: transparent;
+  text-decoration: none;
+  transition:
+    background 120ms ease,
+    color 120ms ease;
+}
+
+.ctaLink:hover {
+  background: var(--accent-sanguine);
+  color: var(--ink-bone);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--sp-4);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-5);
+  background: var(--bg-paper);
+  border: 1px solid var(--rule-line);
+  color: var(--ink-bone);
+  text-decoration: none;
+  transition:
+    border-color 120ms ease,
+    transform 120ms ease;
+  position: relative;
+}
+
+.card:hover {
+  border-color: var(--accent-ochre);
+  transform: translateY(-1px);
+  color: var(--ink-bone);
+}
+
+.cardHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+.cardNumber {
+  display: inline-block;
+  background: #000;
+  color: var(--ink-bone);
+  font-family: var(--font-stamp);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: var(--sp-1) var(--sp-3);
+}
+
+.defendant {
+  font-family: var(--font-serif);
+  font-size: var(--fs-xl);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin: 0;
+  color: var(--ink-bone);
+}
+
+.crime {
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cardFoot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--rule-line);
+  padding-top: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--ink-muted);
+}
+
+.status {
+  font-family: var(--font-stamp);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.statusGuilty {
+  color: var(--status-guilty);
+}
+.statusAcquit {
+  color: var(--status-acquit);
+}
+.statusPending {
+  color: var(--status-pending);
+}
+
+.message {
+  padding: var(--sp-6);
+  text-align: center;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  border: 1px dashed var(--rule-line);
+}
+
+.error {
+  color: var(--accent-sangvin);
+  border-color: var(--accent-sangvin);
+}

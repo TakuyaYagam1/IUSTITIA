@@ -1,0 +1,96 @@
+openapi: 3.0.3
+
+info:
+  title: IUSTITIA
+  version: 3.1.0
+  description: |
+    Судебная платформа купольных государств Марса.
+  contact:
+    name: Межкупольное Технологическое Бюро, Отдел 7
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:8080
+    description: Local dev server
+
+tags:
+  - name: auth
+    description: Аутентификация и сессии
+  - name: cases
+    description: Активные дела
+  - name: complaints
+    description: Доносы граждан
+  - name: documents
+    description: Генератор документов
+  - name: archive
+    description: Закрытые дела
+  - name: system
+    description: Служебные эндпоинты
+
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      $ref: './components/security.yml#/securitySchemes/BearerAuth'
+
+paths:
+  # ----- auth -----
+  /api/auth/login:
+    $ref: './routes/auth.yml#/login'
+  /api/auth/logout:
+    $ref: './routes/auth.yml#/logout'
+  /api/auth/me:
+    $ref: './routes/auth.yml#/me'
+
+  # ----- cases -----
+  /api/cases:
+    $ref: './routes/cases.yml#/list_cases'
+  /api/cases/search:
+    $ref: './routes/cases.yml#/case_search'
+  /api/cases/{id}:
+    $ref: './routes/cases.yml#/case_by_id'
+  /api/cases/{id}/verdict:
+    $ref: './routes/cases.yml#/case_verdict'
+  /api/cases/{id}/accept:
+    $ref: './routes/cases.yml#/case_accept'
+  /api/cases/{id}/dismiss:
+    $ref: './routes/cases.yml#/case_dismiss'
+  /api/cases/{id}/opinion:
+    $ref: './routes/cases.yml#/case_opinion'
+
+  # ----- hearings -----
+  /api/hearings:
+    $ref: './routes/hearings.yml#/list_hearings'
+
+  # ----- users -----
+  /api/users:
+    $ref: './routes/users.yml#/list_users'
+
+  # ----- complaints -----
+  /api/complaints:
+    $ref: './routes/cases.yml#/create_complaint'
+  /api/complaints/{case_id}:
+    $ref: './routes/cases.yml#/list_complaints_by_case'
+  /api/complaints/{id}/evidence:
+    $ref: './routes/cases.yml#/complaint_evidence'
+
+  # ----- documents -----
+  /api/documents/generate:
+    $ref: './routes/cases.yml#/generate_document'
+  /api/documents/{id}:
+    $ref: './routes/cases.yml#/document_by_id'
+  /api/cases/{id}/documents:
+    $ref: './routes/cases.yml#/list_documents_by_case'
+
+  # ----- archive -----
+  /api/archive:
+    $ref: './routes/archive.yml#/list_archive'
+  /api/archive/{id}:
+    $ref: './routes/archive.yml#/archive_by_id'
+
+  # ----- system -----
+  /api/health:
+    $ref: './routes/system.yml#/health'

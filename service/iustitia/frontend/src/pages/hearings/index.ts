@@ -1,0 +1,1 @@
+export { HearingsPage } from './HearingsPage';

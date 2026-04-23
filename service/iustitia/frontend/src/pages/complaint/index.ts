@@ -1,0 +1,1 @@
+export { ComplaintPage } from './ComplaintPage';

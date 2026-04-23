@@ -1,0 +1,13 @@
+health:
+  get:
+    tags: [system]
+    summary: Health check (для compose healthcheck и SLA check_1)
+    operationId: getHealth
+    security: []
+    responses:
+      '200':
+        description: Сервис работает
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/HealthStatus'

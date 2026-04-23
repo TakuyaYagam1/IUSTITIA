@@ -1,0 +1,48 @@
+services:
+  iustitia-backend:
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+    container_name: iustitia-backend
+    restart: unless-stopped
+    environment:
+      - HTTP_ADDR=:8080
+      - DB_PATH=/data/iustitia.db
+      - MIGRATIONS_DIR=/app/migrations
+      - SECRETS_DIR=/app/secrets
+      - JWT_SECRET=mtb-iustitia-v3-2189-tribunal-signing-key
+      - JWT_TTL=1h
+      - CORS_ORIGINS=*
+      - ENV=prod
+    volumes:
+      - iustitia-data:/data
+      - ./secrets:/app/secrets:ro
+    networks:
+      - iustitia-net
+    ports:
+      - "8080:8080"
+
+  iustitia-frontend:
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+      args:
+        VITE_API_URL: ""
+        VITE_SERVICE_TOKEN: "SECRET_MARKER_B_mtb_bundle_service_token_2189"
+        VITE_INTERNAL_HMAC_KEY: "SECRET_MARKER_K_mtb_internal_hmac_key_2189"
+        VITE_TRIBUNAL_SECRET: "SECRET_MARKER_P_mtb_tribunal_parent_secret_2189"
+    container_name: iustitia-frontend
+    restart: unless-stopped
+    depends_on:
+      - iustitia-backend
+    networks:
+      - iustitia-net
+    ports:
+      - "8081:80"
+
+networks:
+  iustitia-net:
+    driver: bridge
+
+volumes:
+  iustitia-data:

@@ -1,0 +1,31 @@
+# Hearings - очередь дел для судьи (status=hearing + opinion прокурора).
+
+list_hearings:
+  get:
+    tags: [cases]
+    summary: Дела, ожидающие приговора судьи
+    description: |
+      Возвращает пары {case, opinion} для всех дел в status=hearing.
+      Только для роли judge.
+    operationId: listHearings
+    responses:
+      '200':
+        description: Список слушаний
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../components/schemas.yml#/HearingItem'
+      '401':
+        description: Неавторизован
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '403':
+        description: Не judge
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'

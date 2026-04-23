@@ -1,0 +1,42 @@
+.paper {
+  position: relative;
+  background:
+    radial-gradient(ellipse at top left, rgba(201, 160, 75, 0.04), transparent 60%),
+    radial-gradient(ellipse at bottom right, rgba(122, 31, 31, 0.05), transparent 55%),
+    var(--bg-paper);
+  color: var(--ink-bone);
+  padding: var(--sp-6) var(--sp-8);
+  border: 1px solid var(--rule-line);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.02) inset,
+    0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.paper::before,
+.paper::after {
+  content: '';
+  position: absolute;
+  left: var(--sp-4);
+  right: var(--sp-4);
+  height: 1px;
+  background: var(--rule-line);
+}
+
+.paper::before {
+  top: var(--sp-3);
+}
+
+.paper::after {
+  bottom: var(--sp-3);
+}
+
+.tight {
+  padding: var(--sp-4) var(--sp-5);
+}
+
+.panel {
+  background: var(--bg-panel);
+  padding: var(--sp-4) var(--sp-5);
+  border: 1px solid var(--rule-line);
+  color: var(--ink-bone);
+}

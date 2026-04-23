@@ -1,0 +1,574 @@
+# Cases, complaints, documents - одна бизнес-ветка.
+
+# -------- Cases --------------------------------------------------------
+
+list_cases:
+  get:
+    tags: [cases]
+    summary: Список активных дел (пагинация)
+    operationId: listCases
+    parameters:
+      - in: query
+        name: limit
+        schema: { type: integer, default: 50, minimum: 1, maximum: 200 }
+      - in: query
+        name: offset
+        schema: { type: integer, default: 0, minimum: 0 }
+      - in: query
+        name: status
+        required: false
+        schema: { $ref: '../components/schemas.yml#/CaseStatus' }
+      - in: query
+        name: assigned_to
+        required: false
+        description: Фильтр по assigned_prosecutor_id (UUID)
+        schema: { $ref: '../components/schemas.yml#/UUID' }
+    responses:
+      '200':
+        description: Список
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../components/schemas.yml#/Case'
+      '401':
+        description: Неавторизован
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '403':
+        description: Нет прав (не judge/prosecutor)
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+  post:
+    tags: [cases]
+    summary: Создать новое дело (citizen)
+    description: |
+      Транзакционно создаёт case (status=draft, author_id=claims.user_id)
+      и ПЕРВЫЙ complaint. Seq_num выдаётся автоматически.
+    operationId: createCase
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yml#/CaseCreateRequest'
+    responses:
+      '201':
+        description: Создано
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/Case'
+      '400':
+        description: Невалидный ввод
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '401':
+        description: Неавторизован
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '403':
+        description: Не citizen
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+
+case_by_id:
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema: { $ref: '../components/schemas.yml#/UUID' }
+  get:
+    tags: [cases]
+    summary: Получить дело по ID
+    operationId: getCaseByID
+    responses:
+      '200':
+        description: Дело
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/Case'
+      '401':
+        description: Неавторизован
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '403':
+        description: Запрещено
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '404':
+        description: Не найдено
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+
+case_verdict:
+  post:
+    tags: [cases]
+    summary: Вынести финальный приговор (только judge)
+    description: |
+      Транзакционно: (1) генерит Document через docgen по шаблону verdict;
+      (2) переводит case в status=closed + выставляет verdict;
+      (3) вставляет запись в archive. Требует case.status=='hearing' и
+      наличие filed opinion.
+    operationId: setCaseVerdict
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { $ref: '../components/schemas.yml#/UUID' }
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yml#/VerdictRequest'
+    responses:
+      '200':
+        description: Приговор вынесен, дело закрыто и заархивировано
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/VerdictResult'
+      '400':
+        description: Невалидный вердикт или статус
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '403':
+        description: Не judge
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '404':
+        description: Не найдено
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+
+case_search:
+  post:
+    tags: [cases]
+    summary: Поиск дел с сортировкой
+    operationId: searchCases
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yml#/SearchRequest'
+    responses:
+      '200':
+        description: Результаты
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../components/schemas.yml#/Case'
+      '400':
+        description: Невалидный запрос
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '401':
+        description: Неавторизован
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+
+# -------- Complaints ---------------------------------------------------
+
+create_complaint:
+  post:
+    tags: [complaints]
+    summary: Подать донос (citizen)
+    operationId: createComplaint
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yml#/ComplaintCreateRequest'
+    responses:
+      '201':
+        description: Создано
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/Complaint'
+      '400':
+        description: Невалидный ввод
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '401':
+        description: Неавторизован
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '403':
+        description: Не citizen
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+
+list_complaints_by_case:
+  get:
+    tags: [complaints]
+    summary: Все доносы по делу (judge/prosecutor)
+    operationId: listComplaintsByCase
+    parameters:
+      - in: path
+        name: case_id
+        required: true
+        schema: { $ref: '../components/schemas.yml#/UUID' }
+    responses:
+      '200':
+        description: Список доносов
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../components/schemas.yml#/Complaint'
+      '401':
+        description: Неавторизован
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '403':
+        description: Запрещено
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+
+complaint_evidence:
+  post:
+    tags: [complaints]
+    summary: Прикрепить улику по URL (prosecutor)
+    operationId: attachEvidence
+    parameters:
+      - in: path
+        name: id
+        required: true
+        description: complaint id
+        schema: { $ref: '../components/schemas.yml#/UUID' }
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yml#/EvidenceRequest'
+    responses:
+      '200':
+        description: Улика прикреплена
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/Complaint'
+      '400':
+        description: Невалидный URL
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '403':
+        description: Не prosecutor
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '404':
+        description: Донос не найден
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+
+# -------- Documents ----------------------------------------------------
+
+generate_document:
+  post:
+    tags: [documents]
+    summary: Сгенерировать документ по шаблону (prosecutor)
+    operationId: generateDocument
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yml#/DocumentGenerateRequest'
+    responses:
+      '200':
+        description: Документ создан
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/Document'
+      '400':
+        description: Невалидный шаблон
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '403':
+        description: Не prosecutor
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+
+list_documents_by_case:
+  get:
+    tags: [documents]
+    summary: Список документов по делу (judge)
+    operationId: listCaseDocuments
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { $ref: '../components/schemas.yml#/UUID' }
+    responses:
+      '200':
+        description: Список документов
+        content:
+          application/json:
+            schema:
+              type: array
+              items: { $ref: '../components/schemas.yml#/Document' }
+      '401':
+        description: Неавторизован
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '403':
+        description: Запрещено
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+
+document_by_id:
+  get:
+    tags: [documents]
+    summary: Получить документ
+    operationId: getDocumentByID
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { $ref: '../components/schemas.yml#/UUID' }
+    responses:
+      '200':
+        description: Документ
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/Document'
+      '401':
+        description: Неавторизован
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '404':
+        description: Не найдено
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+
+# -------- Trial workflow -----------------------------------------------
+
+case_accept:
+  post:
+    tags: [cases]
+    summary: Принять дело в производство и назначить прокурора (registrar)
+    description: |
+      Валидация: case.status=='draft', user(prosecutor_id).role=='prosecutor'.
+      Переводит дело в status=assigned, проставляет assigned_prosecutor_id.
+    operationId: acceptCase
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { $ref: '../components/schemas.yml#/UUID' }
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yml#/CaseAcceptRequest'
+    responses:
+      '200':
+        description: Дело принято
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/Case'
+      '400':
+        description: Невалидный статус или прокурор
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '403':
+        description: Не registrar
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '404':
+        description: Дело не найдено
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+
+case_dismiss:
+  post:
+    tags: [cases]
+    summary: Бюрократически отклонить дело без суда (registrar)
+    description: |
+      Валидация: case.status=='draft'. Переводит case в status=closed,
+      verdict=dismissed; вставляет запись в archive с sentence=NULL.
+    operationId: dismissCase
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { $ref: '../components/schemas.yml#/UUID' }
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yml#/CaseDismissRequest'
+    responses:
+      '200':
+        description: Дело отклонено и заархивировано
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/VerdictResult'
+      '400':
+        description: Невалидный статус
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '403':
+        description: Не registrar
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '404':
+        description: Дело не найдено
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+
+case_opinion:
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema: { $ref: '../components/schemas.yml#/UUID' }
+  post:
+    tags: [cases]
+    summary: Подать предварительное заключение прокурора (prosecutor)
+    description: |
+      Валидация: case.status=='assigned' AND case.assigned_prosecutor_id==claims.user_id.
+      Транзакция: INSERT case_opinions, UPDATE cases SET status='hearing'.
+    operationId: fileOpinion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yml#/OpinionCreateRequest'
+    responses:
+      '201':
+        description: Заключение подано, дело перешло в слушания
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/CaseOpinion'
+      '400':
+        description: Невалидный ввод или статус
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '403':
+        description: Не prosecutor / не назначен на это дело
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '404':
+        description: Дело не найдено
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '409':
+        description: Заключение уже подано
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+  get:
+    tags: [cases]
+    summary: Получить заключение прокурора по делу (judge/prosecutor)
+    operationId: getCaseOpinion
+    responses:
+      '200':
+        description: Заключение
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/CaseOpinion'
+      '403':
+        description: Запрещено
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '404':
+        description: Заключение не найдено
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'

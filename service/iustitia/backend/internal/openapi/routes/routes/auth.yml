@@ -1,0 +1,67 @@
+# Path-items экспонируются в openapi.yml через $ref с именованных ключей.
+
+login:
+  post:
+    tags: [auth]
+    summary: Login и выдача JWT
+    operationId: login
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yml#/LoginRequest'
+    responses:
+      '200':
+        description: Успех
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/LoginResponse'
+      '400':
+        description: Невалидный ввод
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+      '401':
+        description: Неверные учётные данные
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+
+logout:
+  post:
+    tags: [auth]
+    summary: Завершение сессии (no-op для stateless JWT)
+    operationId: logout
+    responses:
+      '204':
+        description: Успех
+      '401':
+        description: Неавторизован
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'
+
+me:
+  get:
+    tags: [auth]
+    summary: Текущий аутентифицированный пользователь
+    operationId: getCurrentUser
+    responses:
+      '200':
+        description: Профиль
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/User'
+      '401':
+        description: Неавторизован
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yml#/ErrorResponse'

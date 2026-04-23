@@ -1,0 +1,89 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.radioRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.label {
+  display: inline-block;
+  background: #000;
+  color: var(--ink-bone);
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: var(--sp-1) var(--sp-3);
+  align-self: flex-start;
+}
+
+.radios {
+  display: flex;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+
+.radio {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  color: var(--ink-bone);
+  cursor: pointer;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--rule-line);
+  border-radius: var(--radius-sm);
+}
+
+.radio:hover {
+  border-color: var(--accent-ochre);
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--sp-2);
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+
+.hint {
+  font-family: var(--font-stamp);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.errorBanner {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--accent-sangvin);
+  border-left: 2px solid var(--accent-sangvin);
+  padding: var(--sp-2) var(--sp-3);
+  background: rgba(122, 31, 31, 0.08);
+}
+
+.error {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--accent-sangvin);
+}
+
+.gateHint {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--accent-ochre);
+  border-left: 2px solid var(--accent-ochre);
+  padding: var(--sp-2) var(--sp-3);
+  background: rgba(180, 130, 40, 0.08);
+  letter-spacing: 0.04em;
+}
