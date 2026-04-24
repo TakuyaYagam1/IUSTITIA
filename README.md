@@ -24,8 +24,8 @@
 
 ## Порты
 
-`:8080` - backend API, 
-`:8081` - frontend (nginx -> проксирует `/api/*` на `:8080`)
+- `:8080` - backend API 
+- `:8081` - frontend (nginx -> проксирует `/api/*` на `:8080`)
 
 ---
 
