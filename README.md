@@ -54,5 +54,3 @@ JUDGE -> выносит приговор, генерирует документ 
 | `judge_3`          | `ju$tice_189`  | judge      |
 | `judge_4`          | `ju$tice_189`  | judge      |
 | `registrar_aria7`  | `r3g1str4r!`   | registrar  |
-
----
