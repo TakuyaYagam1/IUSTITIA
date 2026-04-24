@@ -16,7 +16,7 @@
 
 ## Стек
 
-- Backend: Go, chi, codegen (openapi 3.0, sqlc, wire) (cleanarch)
+- Backend: Go, codegen (openapi 3.0, sqlc, wire) (cleanarch)
 
 - Frontend: React, TypeScript, Vite, codegen (openapi 3.0) (future slice design (FSD))
 
