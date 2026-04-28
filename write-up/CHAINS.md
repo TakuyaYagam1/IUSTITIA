@@ -175,4 +175,4 @@ citizen (нулевые права)
 
 ## Authors
 
-`dave` & `o1d_bu7_go1d`
+`TakuyaYagam1` & `o1d_bu7_go1d`
