@@ -1,4 +1,4 @@
-# IUSTITIA - Attack/Defence CTF Service
+# IUSTITIA - Defence CTF Service
 
 ## Легенда
 
