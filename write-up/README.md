@@ -477,6 +477,6 @@ export const deepMerge = <T extends Record<string, unknown>>(
 
 ## [0x19] Authors
 
-`dave` & `o1d_bu7_go1d`
+`TakuyaYagam1` & `o1d_bu7_go1d`
 
 ---
