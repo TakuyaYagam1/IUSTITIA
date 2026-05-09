@@ -1,6 +1,8 @@
 -- +goose Up
 -- +goose StatementBegin
 
+-- Не нужно изменять название ролей и bcrypt-хэши паролей, так как они уже сгенерированы, этот файл вообще нет смысла трогать, это просто сид данных и вулнов тут нет!
+
 INSERT INTO users (id, username, password, role, dome) VALUES
     ('11111111-1111-4111-8111-111111111111', 'citizen_07',
      '$2a$10$TAtot/IeeOfI2VgWioEZj.Erbyt9AvoMqHQXWMRSbWgoZuTp4CNAe',
