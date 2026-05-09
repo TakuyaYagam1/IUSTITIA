@@ -78,17 +78,26 @@ export const Preview = ({ doc, onApprove }: Props): JSX.Element => {
   const srcDoc = useMemo(() => (doc ? wrapDocumentHtml(doc.content) : null), [doc]);
 
   useEffect(() => {
-    const onMessage = (ev: MessageEvent) => {
-      if (ev.source !== iframeRef.current?.contentWindow) return;
-      if (ev.origin !== 'null' && ev.origin !== window.location.origin) return;
-      const payload = ev.data as { type?: string; ok?: boolean } | undefined;
-      if (!payload || typeof payload.type !== 'string') return;
-      if (payload.type === 'approve-ack' && payload.ok === true && docRef.current) {
-        onApproveRef.current(docRef.current);
-      }
-    };
-    window.addEventListener('message', onMessage);
-    return () => window.removeEventListener('message', onMessage);
+    // Слушатель определён инлайн в addEventListener: чтобы статический скан
+    // бандла видел проверки ev.source / ev.origin сразу за самой
+    // регистрацией обработчика (минифайер ставит тело функции до или после
+    // addEventListener в зависимости от формы записи; инлайн-арроу
+    // гарантирует постпозицию). Очистка - через AbortController.signal.
+    const ac = new AbortController();
+    window.addEventListener(
+      'message',
+      (ev: MessageEvent) => {
+        if (ev.source !== iframeRef.current?.contentWindow) return;
+        if (ev.origin !== 'null' && ev.origin !== window.location.origin) return;
+        const payload = ev.data as { type?: string; ok?: boolean } | undefined;
+        if (!payload || typeof payload.type !== 'string') return;
+        if (payload.type === 'approve-ack' && payload.ok === true && docRef.current) {
+          onApproveRef.current(docRef.current);
+        }
+      },
+      { signal: ac.signal },
+    );
+    return () => ac.abort();
   }, []);
 
   const handleApproveClick = () => {

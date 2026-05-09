@@ -109,7 +109,7 @@ func RegisterRoutes(r chi.Router, h *Server, jwtSecret string) {
 	r.Group(func(pr chi.Router) {
 		pr.Use(middleware.RequireAuth(jwtSecret))
 
-		pr.With(middleware.RequireRole(domain.RoleJudge)).
+		pr.With(middleware.RequireRole(domain.RoleProsecutor, domain.RoleJudge)).
 			Post("/api/documents/generate", wrapper.GenerateDocument)
 
 		pr.With(middleware.RequireRole(domain.RoleProsecutor, domain.RoleJudge)).

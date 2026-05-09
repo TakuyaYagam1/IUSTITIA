@@ -105,14 +105,6 @@ func (u *Complaint) Create(ctx context.Context, caseID, authorID uuid.UUID, text
 		return nil, apperr.ErrBadRequest
 	}
 
-	c, err := u.store.GetCaseByID(ctx, caseID.String())
-	if err != nil {
-		return nil, apperr.ErrNotFound
-	}
-	if c.Status != "open" && c.Status != "hearing" {
-		return nil, apperr.ErrConflict
-	}
-
 	id := uuid.New()
 	row, err := u.store.CreateComplaint(ctx, sqlc.CreateComplaintParams{
 		ID:       id.String(),

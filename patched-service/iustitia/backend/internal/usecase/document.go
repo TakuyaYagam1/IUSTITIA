@@ -33,9 +33,6 @@ func (u *Document) Generate(ctx context.Context, caseID, authorID uuid.UUID, use
 	if err != nil {
 		return nil, apperr.ErrNotFound
 	}
-	if caseRow.Status != "hearing" {
-		return nil, apperr.ErrConflict
-	}
 
 	verdict := ""
 	if caseRow.Verdict != nil {
