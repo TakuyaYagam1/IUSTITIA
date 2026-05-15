@@ -33,8 +33,8 @@ func Load() (*Config, error) {
 		CORSOrigins:     splitCSV(envOr("CORS_ORIGINS", "*")),
 		JWTTTL:          envDuration("JWT_TTL", time.Hour),
 		ShutdownTimeout: envDuration("SHUTDOWN_TIMEOUT", 10*time.Second),
-		ReadTimeout:     envDuration("HTTP_READ_TIMEOUT", 15*time.Second),
-		WriteTimeout:    envDuration("HTTP_WRITE_TIMEOUT", 15*time.Second),
+		ReadTimeout:     envDuration("HTTP_READ_TIMEOUT", 60*time.Second),
+		WriteTimeout:    envDuration("HTTP_WRITE_TIMEOUT", 60*time.Second),
 	}
 
 	if cfg.JWTSecret == "" {
